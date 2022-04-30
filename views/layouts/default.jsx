@@ -4,12 +4,11 @@ function Default(html) {
   return (
     <html>
       <head>
-        <title>Default</title>
+        <title>{html.title || 'Default'}</title>
       </head>
       <body>
         <h1>HTML Rendered!</h1>
-        <div className="container">
-        </div>
+        {html.children}
       </body>
     </html>
   )
