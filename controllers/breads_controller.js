@@ -44,6 +44,8 @@ breads.get('/:indexArray/edit', (req, res) => {
 breads.get('/:id', (req, res) => {
   Bread.findById(req.params.id)
     .then(foundBread => {
+      const bakedBy = foundBread.getBakedBy()
+      console.log(bakedBy)
       res.render('show', {
         bread: foundBread
       })
@@ -79,6 +81,10 @@ breads.post('/', (req, res) => {
   }
 
   Bread.create(req.body)
+  .catch(err => {
+    console.log('error caught')
+    res.render('404')
+  })
   res.status(303).redirect('/breads')
 })
 
