@@ -2,10 +2,13 @@ const express = require('express')
 const breads = express.Router()
 const Bread = require('../models/bread.js')
 const seedData = require('../models/seed.js')
+const Baker = require('../models/baker.js')
+
 
 // INDEX
 breads.get('/', (req, res) => {
   Bread.find()
+  .populate('baker')
     .then(foundBreads => {
       res.render('Index',
         {
@@ -19,8 +22,17 @@ breads.get('/', (req, res) => {
 })
 
 // NEW
+// breads.get('/new', (req, res) => {
+//   res.render('new')
+// })
+// // in the new route
 breads.get('/new', (req, res) => {
-  res.render('new')
+  Baker.find()
+    .then(foundBakers => {
+      res.render('new', {
+        bakers: foundBakers
+      })
+    })
 })
 
 // EDIT
@@ -29,23 +41,30 @@ breads.get('/:indexArray/edit', (req, res) => {
   //   bread: Bread[req.params.indexArray],
   //   index: req.params.indexArray
   // })
-
-  Bread.findById(req.params.indexArray)
-    .then(foundBread => {
-      console.log('edit route', foundBread)
-      res.render('edit', {
-        bread: foundBread
-      })
+  Baker.find()
+    .then(foundBakers => {
+      Bread.findById(req.params.indexArray)
+        .then(foundBread => {
+          console.log('edit route', foundBread)
+          res.render('edit', {
+            bread: foundBread,
+            bakers:foundBakers
+          })
+        })
     })
+
+
+
 })
 
 
 // SHOW INDIVIUAL 
 breads.get('/:id', (req, res) => {
   Bread.findById(req.params.id)
+    .populate('baker')
     .then(foundBread => {
-      const bakedBy = foundBread.getBakedBy()
-      console.log(bakedBy)
+      // const bakedBy = foundBread.getBakedBy()
+      // console.log(bakedBy)
       res.render('show', {
         bread: foundBread
       })
@@ -81,10 +100,10 @@ breads.post('/', (req, res) => {
   }
 
   Bread.create(req.body)
-  .catch(err => {
-    console.log('error caught')
-    res.render('404')
-  })
+    .catch(err => {
+      console.log('error caught')
+      res.render('404')
+    })
   res.status(303).redirect('/breads')
 })
 
