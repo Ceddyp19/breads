@@ -2,7 +2,7 @@ const React = require('react')
 const Default = require('./layouts/Default')
 
 function Show({ baker }) {
-    console.log(hasBreads)
+    let hasBreads = baker.breads.length != 0
     return (
         <Default>
             <h3>{baker.name}</h3>
@@ -30,6 +30,9 @@ function Show({ baker }) {
                     :
                     <h3>{baker.name} hasn't baked any breads</h3>
             }
+            <form action={`/bakers/${baker.id}?_method=DELETE`} method="POST">
+                <input type="submit" value="DELETE" />
+            </form>
         </Default>
     )
 }
