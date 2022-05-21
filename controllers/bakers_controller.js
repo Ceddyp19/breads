@@ -2,7 +2,7 @@
 const express = require('express')
 const baker = express.Router()
 const Baker = require('../models/baker.js')
-
+const bakerSeedData = require('../models/baker_seed.js')
 
 // Index: 
 baker.get('/', (req, res) => {
@@ -16,7 +16,11 @@ baker.get('/', (req, res) => {
 // Show: 
 baker.get('/:id', (req, res) => {
     Baker.findById(req.params.id)
-        .populate('breads')
+        .populate({
+            //limit the number of breads shown
+            path: 'breads',
+            options: { limit: 5 }
+        })
         .then(foundBaker => {
             res.render('bakerShow', {
                 baker: foundBaker
@@ -26,10 +30,10 @@ baker.get('/:id', (req, res) => {
 
 // delete
 baker.delete('/:id', (req, res) => {
-    Baker.findByIdAndDelete(req.params.id) 
-      .then(deletedBaker => { 
-        res.status(303).redirect('/breads')
-      })
+    Baker.findByIdAndDelete(req.params.id)
+        .then(deletedBaker => {
+            res.status(303).redirect('/breads')
+        })
 })
 
 

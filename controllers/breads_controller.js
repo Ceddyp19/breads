@@ -6,22 +6,34 @@ const Baker = require('../models/baker.js')
 
 
 // INDEX
-breads.get('/', (req, res) => {
-  Baker.find()
-    .then(foundBakers => {
-      Bread.find()
-        .populate('baker')
-        .then(foundBreads => {
-          res.render('Index',
-            {
-              breads: foundBreads,
-              bakers: foundBakers,
-              title: 'Index Page'
-            })
-        })
-    })
-
+//Async
+breads.get('/', async (req, res) => {
+  //lean method to lessen memory consumption
+  const foundBakers = await Baker.find().lean()
+  const foundBreads = await Bread.find().populate('baker').limit(2)
+  res.render('Index', {
+    breads: foundBreads,
+    bakers: foundBakers,
+    title: 'Index Page'
+  })
 })
+//Promises
+// breads.get('/', (req, res) => {
+//   Baker.find()
+//     .then(foundBakers => {
+//       Bread.find()
+//         .populate('baker')
+//         .then(foundBreads => {
+//           res.render('Index',
+//             {
+//               breads: foundBreads,
+//               bakers: foundBakers,
+//               title: 'Index Page'
+//             })
+//         })
+//     })
+
+// })
 
 // NEW
 breads.get('/new', (req, res) => {
